@@ -28,7 +28,8 @@ namespace CyberspaceInvader
 
         private DispatcherTimer animationTimer;
         private DispatcherTimer bombTimer;
-        
+        private DispatcherTimer laserTimer;
+
         public Game()
         {
             InitializeComponent();
@@ -41,7 +42,7 @@ namespace CyberspaceInvader
             bombs = new Bombs();
 
             animationTimer = new DispatcherTimer();
-            animationTimer.Interval = TimeSpan.FromMilliseconds(50);
+            animationTimer.Interval = TimeSpan.FromMilliseconds(1);
             animationTimer.Tick += animationTimer_Tick;
             animationTimer.IsEnabled = true;
 
@@ -49,6 +50,16 @@ namespace CyberspaceInvader
             bombTimer.Interval = TimeSpan.FromSeconds(2);
             bombTimer.Tick += bombTimer_Tick;
             bombTimer.IsEnabled = true;
+
+            laserTimer = new DispatcherTimer();
+            laserTimer.IsEnabled = false;
+            laserTimer.Interval = TimeSpan.FromSeconds(3);
+            laserTimer.Tick += laserTimer_Tick;
+        }
+
+        private void laserTimer_Tick(object sender, EventArgs e)
+        {
+            laserTimer.IsEnabled = false;
         }
 
         private void bombTimer_Tick(object sender, EventArgs e)
@@ -81,10 +92,14 @@ namespace CyberspaceInvader
 
         private void gameCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            int x = user.X + user.Width / 2;
-            int y = user.Y - user.Height;
-            Laser laser = new Laser(x, y, lasers);
-            laser.DisplayOn(gameCanvas);
+            if (laserTimer.IsEnabled == false)
+            {
+                int x = user.X + user.Width / 2;
+                int y = user.Y - user.Height;
+                Laser laser = new Laser(x, y, lasers);
+                laser.DisplayOn(gameCanvas);
+                laserTimer.IsEnabled = true;
+            }
         }
 
         private void EndGame(string winner)
